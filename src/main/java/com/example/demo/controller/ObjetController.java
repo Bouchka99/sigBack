@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -25,6 +26,7 @@ public class ObjetController {
 	@Autowired
 	private SequenceGeneratorService sequenceGeneratorService; 
 	
+	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/addObjet")
 	public String saveObjet (@RequestBody Objet objet) {
 		objet.setId(sequenceGeneratorService.generateSequence(Objet.SEQUENCE_NAME));
@@ -32,22 +34,27 @@ public class ObjetController {
 		return "Objet added successfully";
 	}
 	
+	
+	@CrossOrigin(origins="http://localhost:4200")
 	@GetMapping("/getAllObjets")
 	public List<Objet> getObjets(){
 		return objetRepository.findAll();
 	}
 	
+	@CrossOrigin(origins="http://localhost:4200")
 	@GetMapping("/getObjet/{id}")
 	public Optional <Objet> getVideoById(@PathVariable int id) {
 		return objetRepository.findById(id);
 	}
 	
+	@CrossOrigin(origins="http://localhost:4200")
 	@DeleteMapping("/deleteObjet/{id}")
 	public String deleteObjet(@PathVariable int id) {
 		objetRepository.deleteById(id);
 		return "objet deleted successfully";
 	}
 	
+	@CrossOrigin(origins="http://localhost:4200")
 	@PutMapping("/updateObjet/{id}")
 	public ResponseEntity<Objet> updateObjet(@PathVariable int id, @RequestBody Objet objetInfo) {
 		Objet objet = objetRepository.findById(id)

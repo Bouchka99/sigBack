@@ -33,6 +33,7 @@ public class User {
 	
 	
 	
+	private String image;//for image of user
 	
 	
 	
@@ -57,7 +58,20 @@ public class User {
 	
 	
 	
-	
+	public String getImage() {
+		return image;
+	}
+
+
+
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+
+
+
 	public List<Video> getVideos() {
 		return videos;
 	}
