@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,42 +36,71 @@ public class VideoController {
 	@Autowired
 	private SequenceGeneratorService sequenceGeneratorService;
 	
+	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/addVideo/{idUser}/{idObjet}")
-	public String saveVideo(@RequestBody Video video,@PathVariable int idUser,@PathVariable int idObjet) {
+	public Video saveVideo(@RequestBody Video video,@PathVariable int idUser,@PathVariable int idObjet) {
 		
 		Objet objet =objetRepository.findById(idObjet)
 				.orElseThrow(() -> new ResourceNotFoundException ("Objet non trouvé avec l'id :"+idObjet));
-		System.out.println("objettttttttttttttttt: "+objet);
+		
 		User user =userRepository.findById(idUser)
 				.orElseThrow(() -> new ResourceNotFoundException ("User non trouvé avec l'id :"+idUser));
 		
+		//video.setOwner(user);
 		video.setObjet(objet);
 		video.setId(sequenceGeneratorService.generateSequence(Video.SEQUENCE_NAME));
+		video.setIdUser(idUser);
 		//video.setOwner(user);    //we cannot get becides because it will be an infinity loop
-		videoRepository.save(video);
-
-
+		
 		user.addVideo(video);
 		userRepository.save(user);
 		
 		objet.addVideo(video.getId());
 		objetRepository.save(objet);
 
-		return ("Video added sucessfully with Video_id: "+video.getId());
+		return videoRepository.save(video);
 		
 	}
 	
+	@CrossOrigin(origins="http://localhost:4200")
+	@GetMapping("/getUserByvideos")
+	public User getUserByvideos(@PathVariable int id) throws Exception{
+		
+		List<User> Users = userRepository.findAll();
+		try {
+			for(int i =0 ; i<Users.size();i++) {
+				List<Video> Videos = Users.get(i).getVideos();
+				
+				for(int j =0 ; j<Videos.size();j++) {
+					if(id == Videos.get(i).getId()) {
+						System.out.println(Users.get(i));
+						return Users.get(i);
+					}
+					
+				}
+			}
+			}
+			catch(Exception e) {
+				throw new Exception("bad credentials");
+			}
+		return null;
+		
+	}
+	
+	@CrossOrigin(origins="http://localhost:4200")
 	@GetMapping("/getAllVideos")
 	public List<Video> getVideos(){
 		return videoRepository.findAll();
 		
 	}
 	
+	@CrossOrigin(origins="http://localhost:4200")
 	@GetMapping("/getVideo/{id}")
 	public Optional<Video> getVideoById(@PathVariable int id){
 		return videoRepository.findById(id);
 	}
 	
+	@CrossOrigin(origins="http://localhost:4200")
 	@DeleteMapping("/deleteVideo/{idVideo}/{idUser}")
 	public String deleteVideo(@PathVariable int idVideo,@PathVariable int idUser) {
 		Video video = videoRepository.findById(idVideo)
@@ -84,6 +114,7 @@ public class VideoController {
 		return ("Video deleted successfully with video_id:"+idVideo);
 	}
 	
+	@CrossOrigin(origins="http://localhost:4200")
 	@PutMapping("/updateVideo/{idVideo}/{idUser}")
 	public ResponseEntity<Video> updateVideo(@PathVariable int idVideo,@PathVariable int idUser, @RequestBody Video videoInfo){
 		Video video = videoRepository.findById(idVideo)

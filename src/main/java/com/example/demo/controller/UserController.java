@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,8 @@ public class UserController {
 	{
 		
 		System.out.println("Original Image Byte Size - " + file.getBytes().length );
-		String folder ="/Users/Lenovo/Desktop/sigFront/SigFrontProject-master/src/assets/";
+		
+		String folder ="/Users/GMI/Desktop/Sig_project/sigproject/src/assets/";
 		byte [] bytes = file.getBytes();
 		Path path = Paths.get(folder + file.getOriginalFilename());
 		Files.write(path, bytes);
@@ -75,7 +77,23 @@ public class UserController {
 
 	}
 	
+	
 	@CrossOrigin(origins="http://localhost:4200")
+	@GetMapping("/getStreamersUsers")
+	public List<User> getStreamersUsers(){
+		List<User> Users = userRepository.findAll();
+		List<User> UsersStreamer =new ArrayList<User>();
+		for(int i=0 ; i<Users.size();i++) {
+			if(Users.get(i).getRole().length()==8) {
+				UsersStreamer.add(Users.get(i));
+			}
+		}
+		return UsersStreamer;
+		
+	}
+	
+	
+	//@CrossOrigin(origins="http://localhost:4200")
 	@GetMapping("/getAllUsers")
 	public List<User> getUsers(){
 		System.out.println("entreeeee**************************");

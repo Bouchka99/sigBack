@@ -8,6 +8,8 @@ import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Generated;
 
 @Document(collection="Video")
@@ -16,28 +18,41 @@ public class Video {
     public static final String SEQUENCE_NAME = "videos_sequence";
 	@Id
 	private int id;
+	
+	private int idUser;
+	
+	public int getIdUser() {
+		return idUser;
+	}
+	public void setIdUser(int idUser) {
+		this.idUser = idUser;
+	}
+
 	private String lien;
 	
+	private double lng;
+	private double lat;
+	
+	@JsonIgnore
 	@DocumentReference(lazy=true)
 	private User owner;
+	
 	
 	private Objet objet;
 	
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	public double getLng() {
+		return lng;
+	}
+	public void setLng(double lng) {
+		this.lng = lng;
+	}
+	public double getLat() {
+		return lat;
+	}
+	public void setLat(double lat) {
+		this.lat = lat;
+	}
 	public Objet getObjet() {
 		return objet;
 	}
